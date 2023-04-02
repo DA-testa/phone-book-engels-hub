@@ -71,9 +71,10 @@ def add(address, name, buckets):
 def find(query, buckets):
     hashed= make_hash(query)
     bucket = buckets[hashed]
-    
+    # print(bucket)
     if len(bucket)==1:
-        print(bucket[0][1])
+        if bucket[0][0]==query:
+            print(bucket[0][1])
         return
 
     index=False
