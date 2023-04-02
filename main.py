@@ -75,6 +75,8 @@ def find(query, buckets):
     if len(bucket)==1:
         if bucket[0][0]==query:
             print(bucket[0][1])
+        else:
+            print("not found")
         return
 
     index=False
