@@ -88,14 +88,14 @@ def find(query, buckets):
 def delete(query, buckets):
     hashed= make_hash(query)
     bucket = buckets[hashed]
-    index=False
+    i=False
     for item in bucket:
         if item[0]==query:
-            index=True
+            i=True
             bucket.remove(item)
             buckets[hashed]=bucket
             
-    if not index:
+    if not i:
         print("not found")
     return buckets
 
