@@ -88,6 +88,7 @@ def find(query, buckets):
 def delete(query, buckets):
     hashed= make_hash(query)
     bucket = buckets[hashed]
+    index=False
     for item in bucket:
         if item[0]==query:
             index=True
