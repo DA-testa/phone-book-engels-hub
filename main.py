@@ -1,5 +1,8 @@
 # python3
 
+from math import floor
+
+
 class Query:
     def __init__(self, query):
         self.type = query[0]
@@ -15,33 +18,96 @@ def write_responses(result):
     print('\n'.join(result))
 
 def process_queries(queries):
-    result = []
-    # Keep list of all existing (i.e. not deleted yet) contacts.
-    contacts = []
-    for cur_query in queries:
-        if cur_query.type == 'add':
-            # if we already have contact with such number,
-            # we should rewrite contact's name
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    contact.name = cur_query.name
-                    break
-            else: # otherwise, just add it
-                contacts.append(cur_query)
-        elif cur_query.type == 'del':
-            for j in range(len(contacts)):
-                if contacts[j].number == cur_query.number:
-                    contacts.pop(j)
-                    break
-        else:
-            response = 'not found'
-            for contact in contacts:
-                if contact.number == cur_query.number:
-                    response = contact.name
-                    break
-            result.append(response)
-    return result
+    pass
+    # a=0.75
+    # m=3000;
+    # n=2250;
+    # result = []
+    # # Keep list of all existing (i.e. not deleted yet) contacts.
+    # contacts = []
+    # for cur_query in queries:
+    #     if cur_query.type == 'add':
+            
+            
+    #     elif cur_query.type == 'del':
+            
+    #     else:
+            
+    # return result
+
+class Buckets:
+    buckets= [[]] * 3000
+    m=3000
+    n=2250
+    a=0.75
+    p=5051
+
+
+def make_hash(s):
+    ans=0
+    for c in reversed(str(s)):
+        ans=floor(ans * 0.75 + ord(c))%5051
+    
+    return ans%3000
+
+def add(address, name, buckets):
+    hashed= make_hash(address)
+    bucket = buckets[hashed]
+    index=False
+    if bucket is None:
+        bucket=[address, name]
+        buckets[hashed]=bucket
+        return buckets
+    for i, item in enumerate(bucket):
+        if item[0]==address:
+            index=True
+            item=[address, name]
+            buckets[hashed][i]=item
+    if not index:
+        bucket.append([address, name])
+        buckets[hashed]=bucket
+    return buckets
+
+def find(query, buckets):
+    hashed= make_hash(query)
+    bucket = buckets[hashed]
+    
+    if len(bucket)==1:
+        print(bucket[0][1])
+        return
+
+    index=False
+    for item in bucket:
+        if item[0]==query:
+            index=True
+            print(item[1])
+    if not index:
+        print("not found")
+
+
+def delete(query, buckets):
+    hashed= make_hash(query)
+    bucket = buckets[hashed]
+    for item in bucket:
+        if item[0]==query:
+            index=True
+            bucket.remove(item)
+            buckets[hashed]=bucket
+            
+    if not index:
+        print("not found")
+    return buckets
 
 if __name__ == '__main__':
-    write_responses(process_queries(read_queries()))
+    queries=read_queries()
+    buckets= [[]] * 3000
+    
+    for index, item in enumerate(queries):
+        if item.type == 'add':
+            buckets = add(item.number, item.name, buckets)
+        elif item.type == 'find':
+            find(item.number, buckets)
+        else:
+            buckets=delete(item.number, buckets)
+    #write_responses(process_queries(read_queries()))
 
